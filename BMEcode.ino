@@ -20,6 +20,8 @@ extern "C" {
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
 #include "Adafruit_BME680.h"
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
 #define WIFI_SSID "Moonwiff"
 #define WIFI_PASSWORD "rue_de_la_Grande_680_Plage_10!"
@@ -40,6 +42,16 @@ extern "C" {
 #define BME_MISO 12
 #define BME_MOSI 13
 #define BME_CS 15*/
+
+#define BME_SCK 13
+#define BME_MISO 12
+#define BME_MOSI 11
+#define BME_CS 10
+
+
+#define SEALEVELPRESSURE_HPA (1013.25)
+Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire);
+
 
 Adafruit_BME680 bme; // I2C
 //Adafruit_BME680 bme(BME_CS); // hardware SPI
@@ -137,6 +149,17 @@ void onMqttPublish(uint16_t packetId) {
 void setup() {
   Serial.begin(115200);
   Serial.println();
+  
+  // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x32)
+  // init done
+  display.display();
+  delay(100);
+  display.clearDisplay();
+  display.display();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+
 
   if (!bme.begin()) {
     Serial.println(F("Could not find a valid BME680 sensor, check wiring!"));
@@ -201,17 +224,40 @@ void loop() {
     Serial.printf("Publishing on topic %s at QoS 1, packetId %i: ", MQTT_PUB_GAS, packetIdPub4);
     Serial.printf("Message: %.2f \n", gasResistance);
   }
+
+
+
+
+// Issu du code LCD
+
+  
+  display.setCursor(0,0);
+  display.clearDisplay();
+
+  if (! bme.performReading()) {
+    Serial.println("Failed to perform reading :(");
+    return;
+  }
+  Serial.print("Temperature = "); Serial.print(bme.temperature); Serial.println(" *C");
+  display.print("Temperature: "); display.print(bme.temperature); display.println(" *C");
+
+  Serial.print("Pressure = "); Serial.print(bme.pressure / 100.0); Serial.println(" hPa");
+  display.print("Pressure: "); display.print(bme.pressure / 100); display.println(" hPa");
+
+  Serial.print("Humidity = "); Serial.print(bme.humidity); Serial.println(" %");
+  display.print("Humidity: "); display.print(bme.humidity); display.println(" %");
+
+  Serial.print("Gas = "); Serial.print(bme.gas_resistance / 1000.0); Serial.println(" KOhms");
+  display.print("Gas: "); display.print(bme.gas_resistance / 1000.0); display.println(" KOhms");
+
+  Serial.println();
+  display.display();
+  delay(2000);
 }
 
 
 
-
-
-
-
-
-
-
+/*
 
 
 
@@ -232,7 +278,7 @@ void loop() {
   Written by Limor Fried & Kevin Townsend for Adafruit Industries.
   BSD license, all text above must be included in any redistribution
  ***************************************************************************/
-
+/*
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
@@ -304,3 +350,5 @@ void loop() {
   display.display();
   delay(2000);
 }
+
+*/
