@@ -10,6 +10,7 @@
   https://www.raspberryme.com/esp32-mqtt-publier-les-lectures-du-capteur-bme680-arduino-ide/
 */
 
+
 #include <WiFi.h>
 extern "C" {
   #include "freertos/FreeRTOS.h"
@@ -27,7 +28,7 @@ extern "C" {
 #define WIFI_PASSWORD "rue_de_la_Grande_680_Plage_10!"
 
 // Raspberry Pi Mosquitto MQTT Broker
-#define MQTT_HOST IPAddress(192, 168, 1, XXX)
+#define MQTT_HOST IPAddress(192, 168, 1, 12)
 // For a cloud MQTT broker, type the domain name
 //#define MQTT_HOST "example.com"
 #define MQTT_PORT 1883
@@ -38,10 +39,10 @@ extern "C" {
 #define MQTT_PUB_PRES "esp/bme680/pressure"
 #define MQTT_PUB_GAS  "esp/bme680/gas"
 
-/*#define BME_SCK 14
-#define BME_MISO 12
-#define BME_MOSI 13
-#define BME_CS 15*/
+//#define BME_SCK 14
+//#define BME_MISO 12
+//#define BME_MOSI 13
+//#define BME_CS 15
 
 #define BME_SCK 13
 #define BME_MISO 12
@@ -139,6 +140,8 @@ void onMqttUnsubscribe(uint16_t packetId) {
   Serial.print("  packetId: ");
   Serial.println(packetId);
 }*/
+
+
 
 void onMqttPublish(uint16_t packetId) {
   Serial.print("Publish acknowledged.");
@@ -257,7 +260,7 @@ void loop() {
 
 
 
-/*
+
 
 
 
@@ -279,6 +282,7 @@ void loop() {
   BSD license, all text above must be included in any redistribution
  ***************************************************************************/
 /*
+
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
